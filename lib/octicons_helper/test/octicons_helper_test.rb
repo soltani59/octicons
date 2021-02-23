@@ -39,5 +39,9 @@ describe OcticonsHelper do
 
       OcticonsHelper.octicons_helper_cache = {}
     end
+
+    it "serves the use markup when use_markup is true" do
+      assert_match /<use href=/, octicon("alert", use_markup: true)
+    end
   end
 end

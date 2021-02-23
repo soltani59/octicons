@@ -3,6 +3,7 @@ require "action_view"
 
 module OcticonsHelper
   include ActionView::Helpers::TagHelper
+  include ActionView::Helpers::AssetUrlHelper
 
   mattr_accessor :octicons_helper_cache, default: {}
 
@@ -16,7 +17,13 @@ module OcticonsHelper
     else
       icon = Octicons::Octicon.new(symbol, options)
 
-      tag = content_tag(:svg, icon.path.html_safe, icon.options).freeze # rubocop:disable Rails/OutputSafety
+      content = if options[:use_markup]
+        content_tag(:use, nil, href: "#{image_path('octicons-sprite.svg')}##{symbol}")
+      else
+        icon.path.html_safe
+      end
+
+      tag = content_tag(:svg, content, icon.options).freeze # rubocop:disable Rails/OutputSafety
       octicons_helper_cache[cache_key] = tag
       tag
     end
